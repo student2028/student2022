@@ -11,8 +11,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="cool-java" target="1.5" />
-      <module name="leecode" target="1.5" />
+      <module name="cool-java" target="1.8" />
+      <module name="leecode" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

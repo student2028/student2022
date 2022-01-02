@@ -8,7 +8,7 @@ import java.util.Random;
 public class Utils {
 
 
-    public static void printArry(int[] arr) {
+    public static void printArray(int[] arr) {
         int l = arr.length;
         for (int i = 0; i < l; i++) {
             System.out.print(arr[i] + "\t");

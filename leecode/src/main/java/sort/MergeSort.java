@@ -2,7 +2,7 @@ package sort;
 
 import common.Utils;
 
-import static common.Utils.printArry;
+import static common.Utils.printArray;
 
 /**
  * 归并排序
@@ -20,12 +20,12 @@ public class MergeSort {
 
         int[] arr = Utils.generateIntArray(10);
 
-        printArry(arr);
+        printArray(arr);
 
         // mergeSort1(arr, new int[arr.length], 0, arr.length - 1);
 
         mergeSort(arr, 0, arr.length - 1);
-        printArry(arr);
+        printArray(arr);
 
     }
 

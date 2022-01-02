@@ -2,7 +2,7 @@ package sort;
 
 import common.Utils;
 
-import static common.Utils.printArry;
+import static common.Utils.printArray;
 import static common.Utils.swap;
 
 /**
@@ -34,9 +34,9 @@ public class HeapSort {
 
         int[] arr = Utils.generateIntArray(10);
 
-        printArry(arr);
+        printArray(arr);
         heapSort2(arr);
-        printArry(arr);
+        printArray(arr);
 
     }
 
@@ -45,7 +45,7 @@ public class HeapSort {
         for (int i = N / 2; i >= 0; i--) {
             sink(arr, i, N);
         }
-        printArry(arr);
+        printArray(arr);
         for (int i = N - 1; i > 0; i--) {
             swap(arr, 0, i);
             sink(arr, 0, i);

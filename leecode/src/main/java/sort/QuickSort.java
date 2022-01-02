@@ -31,12 +31,12 @@ public class QuickSort {
     public static void main(String[] args) {
 
         int[] arr = Utils.generateIntArray(10);
-        Utils.printArry(arr);
+        Utils.printArray(arr);
 //        Arrays.sort(arr);
 //        Utils.printArry(arr);
 
         quickSort2(arr, 0, arr.length - 1);
-        Utils.printArry(arr);
+        Utils.printArray(arr);
     }
 
     private static int partition(int[] arr, int left, int right) {
