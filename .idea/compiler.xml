@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="leecode" />
-        <module name="cool-java" />
-      </profile>
-    </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="cool-java" target="1.8" />
-      <module name="leecode" target="1.8" />
-    </bytecodeTargetLevel>
+    <option name="USE_RELEASE_OPTION" value="false" />
+    <bytecodeTargetLevel target="8" />
   </component>
 </project>

@@ -21,6 +21,7 @@ public class ListNode {
         this.next = next;
     }
 
+    //逆序
     public static ListNode of(int[] arr) {
         ListNode temp = null;
         int N = arr.length;
@@ -30,6 +31,19 @@ public class ListNode {
             temp = node;
         }
         return temp;
+    }
+
+    //顺序
+    public static ListNode from(int[] arr) {
+        ListNode head = new ListNode();
+        ListNode temp = head;
+        int N = arr.length;
+        for (int i = 0; i < N; i++) {
+            ListNode node  = new ListNode(arr[i]);
+            temp.next = node;
+            temp = temp.next;
+        }
+        return head.next;
     }
 
     public void show() {
