@@ -7,12 +7,15 @@ public class ListNode {
     public ListNode() {
     }
 
-    public int val(){
+    public int val() {
         return this.val;
     }
 
+    public void val(int val) {
+        this.val = val;
+    }
 
-   public  ListNode(int val) {
+    public ListNode(int val) {
         this.val = val;
     }
 
@@ -22,11 +25,11 @@ public class ListNode {
     }
 
     //逆序
-    public static ListNode of(int[] arr) {
+    public static ListNode of(int... arr) {
         ListNode temp = null;
         int N = arr.length;
         for (int i = 0; i < N; i++) {
-            ListNode node  = new ListNode(arr[i]);
+            ListNode node = new ListNode(arr[i]);
             node.next = temp;
             temp = node;
         }
@@ -34,23 +37,26 @@ public class ListNode {
     }
 
     //顺序
-    public static ListNode from(int[] arr) {
+    public static ListNode from(int... arr) {
         ListNode head = new ListNode();
         ListNode temp = head;
         int N = arr.length;
         for (int i = 0; i < N; i++) {
-            ListNode node  = new ListNode(arr[i]);
+            ListNode node = new ListNode(arr[i]);
             temp.next = node;
             temp = temp.next;
         }
         return head.next;
     }
 
+
     public void show() {
+        int i = 0;//for listnode has cycle
         ListNode temp = this;
-        while (temp != null) {
+        while (temp != null && i < 20) {
             System.out.print(temp.val + "\t");
             temp = temp.next;
+            i++;
         }
         System.out.println();
     }
