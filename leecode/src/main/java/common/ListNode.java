@@ -52,6 +52,7 @@ public class ListNode {
 
     public void show() {
         int i = 0;//for listnode has cycle
+
         ListNode temp = this;
         while (temp != null && i < 20) {
             System.out.print(temp.val + "\t");

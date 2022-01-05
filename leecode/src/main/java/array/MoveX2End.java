@@ -1,9 +1,13 @@
-package basic;
+package array;
+
 
 import java.util.function.Predicate;
 
 import static common.Utils.printArray;
 import static common.Utils.swap;
+
+
+
 
 /**
  * 一个整型 数组中的一些元素
@@ -15,7 +19,8 @@ import static common.Utils.swap;
  *
  *
  */
-public class MoveX2End {
+
+public   class MoveX2End {
 
     public static void main(String[] args) {
 
@@ -32,7 +37,7 @@ public class MoveX2End {
     }
 
     private  static void moveX2End(int[] arr, Predicate<Integer> cond) {
-         //双指针思路 一个指针指向 待插入的位置  另一个往后扫描
+        //双指针思路 一个指针指向 待插入的位置  另一个往后扫描
         //找到不是0的数据就插入 然后指针后移
         //想到快排的划分 交换
         int N = arr.length;
