@@ -65,7 +65,7 @@ public class TreeNode {
     }
 
     public void show() {
-        System.out.print("level order:  ");
+        System.out.print("level order:  \n");
         levelOrderTraverse(this);
     }
 
@@ -192,17 +192,17 @@ public class TreeNode {
         Queue<TreeNode> que = new LinkedList<TreeNode>();
         que.offer(root);
 
-        int size = 0;
-        int LINE_SIZE = 10;
         while (!que.isEmpty()) {
-
-            TreeNode tnode = que.poll();
-            size++;
-            System.out.print(tnode.val + "\t");
-            if (size % LINE_SIZE == 0) System.out.println();
-            if (tnode.left != null) que.offer(tnode.left);
-            if (tnode.right != null) que.offer(tnode.right);
-
+            int len = que.size();
+            while(len > 0) {
+                TreeNode tnode = que.poll();
+                System.out.print(tnode.val + "\t");
+                if (tnode.left != null) que.offer(tnode.left);
+                if (tnode.right != null) que.offer(tnode.right);
+                len --;
+            }
+            //下一层之前输出断行
+            System.out.println();
         }
     }
 
