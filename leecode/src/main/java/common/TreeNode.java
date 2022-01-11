@@ -32,6 +32,23 @@ public class TreeNode {
         this.right = right;
     }
 
+    @Override
+    public String toString() {
+        return "TreeNode {" +
+                "val=" + val +
+                '}';
+    }
+
+    //假定TreeNode is a list
+    public void listShow() {
+        TreeNode temp = this;
+        while(temp != null) {
+            System.out.print(temp.val + "\t");
+            System.out.print("null" + "\t");
+            temp = temp.right;
+        }
+    }
+
     //根据传入的数字数组来构建二叉树
     //根据顺序存储的数组 构建链式存储的二叉树
     //先从叶子结点构建  从后往前
@@ -175,12 +192,23 @@ public class TreeNode {
     }
 
 
-    //二叉树转成链表
-    public ListNode toList() {
+    public   TreeNode find(int val) {
+        return findNode(this, val);
+    }
 
+    private TreeNode findNode(TreeNode root, int val) {
 
+        if(root == null || root.val == val) return root;
+        //从左子树找
+        TreeNode left = findNode(root.left, val);
+        TreeNode right = findNode(root.right, val);
+
+        if(left == null && right == null) return null;
+        if(left == null && right != null) return right;
+        if(right == null && left != null) return left;
         return null;
     }
+
 
     /**
      * 借助队列进行层序遍历
