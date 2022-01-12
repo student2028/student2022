@@ -32,11 +32,12 @@ public class Tree2List {
         //  TreeNode root = TreeNode.of(1, 2, 5, 3, 4, null, 6);
         TreeNode root = TreeNode.of(0);
 
+       // root.listShow();
+        flattenR(root);
         root.listShow();
-
     }
 
-    //尚不理解  需要再消化下
+    //画画图就好理解了 自己在本本上好好画画
     private static void flattenR(TreeNode root) {
         if(root==null) return;  //中
         flatten(root.left);     // 左
