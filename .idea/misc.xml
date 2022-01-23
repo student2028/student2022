@@ -5,6 +5,7 @@
       <list>
         <option value="$PROJECT_DIR$/leecode/pom.xml" />
         <option value="$PROJECT_DIR$/cool-java/pom.xml" />
+        <option value="$PROJECT_DIR$/bigdata-qa/pom.xml" />
       </list>
     </option>
   </component>

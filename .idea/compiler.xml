@@ -2,6 +2,20 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="USE_RELEASE_OPTION" value="false" />
-    <bytecodeTargetLevel target="8" />
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cool-java" />
+        <module name="bigdata-qa" />
+        <module name="leecode" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="bigdata-qa" target="1.5" />
+      <module name="cool-java" target="8" />
+      <module name="leecode" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
