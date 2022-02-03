@@ -33,7 +33,7 @@ public class Tree2List {
         // TreeNode root = TreeNode.of(0);
 
         // root.listShow();
-        flattenR(root);
+        flatten(root);
         root.listShow();
     }
 
@@ -47,32 +47,52 @@ public class Tree2List {
         root.left = null;               // 左置空
         while (root.right != null) root = root.right; // 指向右末尾
         root.right = last;         //拼接
+/*
+         1
+       2   3
+     4  5
+*/
 
     }
 
-    //即原地修改root 这种写法丑陋啊
+    /**
+     * 思路是这样的 既然是要 保持先序遍历的顺序 即 根左右
+     * 所以就先借助一个栈实现先序遍历 先序遍历的节点先存在一个队列中
+     * 然后再遍历队列进行处理 代码实现如下
+     * 其实可以不用队列 直接在遍历的过程中完成处理 这是优化的点
+     * 实现先序遍历 为什么需要栈？
+     *
+     */
     private static void flatten(TreeNode root) {
         if (root == null) return;
         // 如果只有root 也要判断  否则下面会出现环
         Stack<TreeNode> st = new Stack<>();
         st.push(root);
-        Queue<TreeNode> qu = new LinkedList<>();
+//        Queue<TreeNode> qu = new LinkedList<>();
+        TreeNode head = new TreeNode(-1);
         while (!st.isEmpty()) {
             TreeNode node = st.pop();
             System.out.print(node.val + "\t");
-            qu.offer(node);
+//            qu.offer(node);
+
+            head.right = node;
+            head.left = null;
+            head = node;
+
             if (node.right != null) st.push(node.right);
             if (node.left != null) st.push(node.left);
         }
-        TreeNode temp = root;
-        while (!qu.isEmpty()) {
-            TreeNode node = qu.poll();
-            if (temp != node) {
-                temp.left = null;
-                temp.right = node;
-                temp = node;
-            }
-        }
+        root = head.right;
+
+ //       TreeNode temp = root;
+//        while (!qu.isEmpty()) {
+//            TreeNode node = qu.poll();
+//            if (temp != node) {
+//                temp.left = null;
+//                temp.right = node;
+//                temp = node;
+//            }
+//        }
     }
 
 }

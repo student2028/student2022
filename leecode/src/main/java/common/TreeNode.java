@@ -234,6 +234,19 @@ public class TreeNode {
         }
     }
 
+    public static TreeNode array2BST(int... nums) {
+        return traversal(nums, 0, nums.length - 1);
+    }
+
+    private static TreeNode traversal(int[] nums, int left, int right) {
+        if (left > right) return null;
+        int mid = left + (right - left) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = traversal(nums, left, mid - 1);
+        root.right = traversal(nums, mid + 1, right);
+        return root;
+    }
+
     public static void main(String[] args) {
         TreeNode root = TreeNode.of(1, 2, 3, 4, 5, 6, 7);
 
