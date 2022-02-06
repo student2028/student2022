@@ -23,6 +23,10 @@ import common.ListNode;
  * 3. 先遍历两个长度 让长的先走差的距离  然后再分别比较 相同则返回  没有就是null
  * 空间时间上第二种最优 最容易想到的就是第一种和第三种
  * 好好理解第二种
+ * 理解当前的算法：
+ * 没有先扫描长度 而是如果两个链表长度不同 第一个先遍历完的时候 ，再去走长的，同理长的走完再走短的，
+ * 这样 最多走了两个链表长度之和 每一个指针都走了这么多的时候 就说明没有公共节点 它们都成为null 退出
+ * 如果没有走完 就找到了公共节点 则这个时候 返回任何一个即可 就是公共节点
  */
 
 public class IntersectionList {
@@ -41,8 +45,6 @@ public class IntersectionList {
         ListNode dummy = new ListNode(100, ld);
 
         intersectListNode(lc, dummy).show();
-
-
 
     }
 
