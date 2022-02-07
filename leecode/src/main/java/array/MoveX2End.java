@@ -34,6 +34,10 @@ public   class MoveX2End {
         moveX2End(arr, i-> i%2==0);
         printArray(arr);
 
+        int[] nums = new int[] {1,2,3,4};
+        exchange(nums);
+        printArray(nums);
+
     }
 
     private  static void moveX2End(int[] arr, Predicate<Integer> cond) {
@@ -49,5 +53,18 @@ public   class MoveX2End {
         }
     }
 
+
+    public static int[] exchange(int[] nums) {
+        //双指针 一个指针遍历  一个left指针表示左侧全是奇数
+        //左指针右走 右指针左移 交换 这是快排的partition
+        int left = 0;
+        int right = nums.length - 1;
+        while(left < right) {
+            while(  nums[left]%2==1 && left < right) left++;
+            while( (nums[right]%2== 0) && right > 0) right --;
+            if(left < right)  swap(nums,left,right);
+        }
+        return nums;
+    }
 
 }
