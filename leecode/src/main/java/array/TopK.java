@@ -1,7 +1,7 @@
 package array;
 
 
-
+import static common.Utils.printArray;
 import static common.Utils.swap;
 
 /**
@@ -19,7 +19,10 @@ public class TopK {
 
         int[] nums = {3, 2, 1, 5, 6, 4};
 
-        quickSelectKthNum(nums, 0, nums.length - 1, 2);
+        printArray(nums);
+        System.out.println("find the 第2大的元素：");
+
+        System.out.println(quickSelectKthNum(nums, 2));
 
     }
 
@@ -35,33 +38,32 @@ public class TopK {
         return i;
     }
 
-    //这种写法的partition 在leecode中通不过 请注意
     private static int partition2(int[] arr, int left, int right) {
         int i = left;
         int j = right;
 
-        while (i < j) {
-            while (arr[i] < arr[left]) i++;
-            while (arr[j] > arr[left]) j--;
-            swap(arr, i, j);
+        while (i <= j) {
+            while (i <= j && arr[i] < arr[left]) i++;
+            while (i <= j && arr[j] > arr[left]) j--;
+            if (i <= j) swap(arr, i, j);
         }
+        swap(arr, --i, left);
         return i;
     }
 
 
-    private static int quickSelectKthNum(int[] nums, int left, int right, int k) {
-
-        int kth = nums.length - k;
+    private static int quickSelectKthNum(int[] nums, int k) {
+        int N = nums.length;
+        int target = N - k;
+        int left = 0;
+        int right = N - 1;
+        int pivot = partition(nums, left, right);
         while (left <= right) {
-            int pivot = partition2(nums, left, right);
-            if (pivot == kth) {
-                System.out.println(nums[kth]);
-                return nums[kth];
-            }
-            if (pivot > kth) right = pivot - 1;
+            if (pivot == target) return nums[target];
+            if (pivot > target) right = pivot - 1;
             else left = pivot + 1;
+            pivot = partition(nums, left, right);
         }
-
         return -1;
     }
 

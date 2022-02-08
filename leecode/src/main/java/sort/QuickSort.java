@@ -2,6 +2,7 @@ package sort;
 
 import common.Utils;
 
+import static common.Utils.printArray;
 import static common.Utils.swap;
 
 
@@ -30,7 +31,8 @@ public class QuickSort {
 
     public static void main(String[] args) {
 
-        int[] arr = Utils.generateIntArray(10);
+        //int[] arr = Utils.generateIntArray(10);
+        int[] arr = new int[]{5, 1, 1, 2, 0, 0};
         Utils.printArray(arr);
 //        Arrays.sort(arr);
 //        Utils.printArry(arr);
@@ -53,23 +55,24 @@ public class QuickSort {
     }
 
 
+    //经测试 下面代码可以通过leecode检测 是正确的
     private static int partition2(int[] arr, int left, int right) {
         int pivot = left;
         int i = left;
         int j = right;
-
-        while (i < j) {
-            while (arr[i] < arr[pivot]) i++;
-            while (arr[j] > arr[pivot]) j--;
-            swap(arr, i, j);
+        while (i <= j) {
+            while (i <= j && arr[i] <= arr[pivot]) i++;
+            while (i <= j && arr[j] > arr[pivot])  j--;
+            if (i <= j) swap(arr, i, j);
         }
+        swap(arr, --i, left);
         return i;
     }
 
 
     private static void quickSort2(int[] arr, int left, int right) {
         if (left >= right) return;
-        int pivot = partition(arr, left, right);
+        int pivot = partition2(arr, left, right);
         quickSort2(arr, left, pivot - 1);
         quickSort2(arr, pivot + 1, right);
     }
