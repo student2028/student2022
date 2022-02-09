@@ -45,9 +45,9 @@ public class ThreeNumSum {
         Arrays.sort(nums);
         int N = nums.length;
         for (int i = 0; i < N; i++) {
-            if(nums[i] > 0) //排序后数据大于0 则肯定不存在了
+            if(nums[i] > 0) //排序后最左侧的数据nums[i]大于0 则肯定不存在满足需求的数据了
                 return res;
-             //排序重复
+             //技巧代码  排序后的数组 可以通过下面的方式去重
             if(i>0 && nums[i] == nums[i - 1]) continue;
 
             int left = i + 1;

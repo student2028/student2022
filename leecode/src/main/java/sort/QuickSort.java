@@ -55,20 +55,17 @@ public class QuickSort {
     }
 
 
-    //经测试 下面代码可以通过leecode检测 是正确的
-    private static int partition2(int[] arr, int left, int right) {
+     private static int partition2(int[] arr, int left, int right) {
         int pivot = left;
         int i = left;
         int j = right;
         while (i <= j) {
             while (i <= j && arr[i] <= arr[pivot]) i++;
             while (i <= j && arr[j] > arr[pivot])  j--;
-            if (i <= j) swap(arr, i, j);
+            swap(arr, --i, j);
         }
-        swap(arr, --i, left);
         return i;
     }
-
 
     private static void quickSort2(int[] arr, int left, int right) {
         if (left >= right) return;
