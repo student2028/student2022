@@ -19,10 +19,6 @@ import common.ListNode;
  * -500 <= Node.val <= 500
  * 1 <= left <= right <= n
  * 一定要先用笔在纸上画一画 找一找思路
- * 链表的题没有那么难
- * 一点一点的技巧 积累起来
- * 今天的题是一点一点调出来的
- *
  */
 public class RevertList2 {
 
@@ -30,40 +26,43 @@ public class RevertList2 {
 
         ListNode head = ListNode.from(1, 2, 3, 4, 5);
         head.show();
-        revertList(head, 2, 4).show();
+        ListNode node = reverseBetween(head, 2, 4);
+        node.show();
+        ListNode node2 = reverseBetween(ListNode.from(3, 5), 1, 2);
+        node2.show();
 
-        ListNode list2 = ListNode.from(6,7,8,9,10,11,12,13);
-        list2.show();
-        revertList(list2, 3,8).show();
 
     }
 
-    private static ListNode revertList(ListNode head, int left, int right) {
-        if (head == null || head.next == null) return head;
-        ListNode dummy = new ListNode(-1, head);
-        //存下来开始的那一个节点 和 最后一个节点
-        int i = 1;
-        ListNode npre = dummy;
-        while (i < left) {
-            npre = npre.next;
-            head = head.next;
-            i++;
-        }
-        npre.next = null;
-        ListNode pre = head;
-        ListNode cur = head.next;
-        ListNode temp = head;
-        while (cur != null && i < right) {
-            ListNode next = cur.next;
-            cur.next = pre;
-            pre = cur;
-            cur = next;
-            i++;
-        }
 
-        temp.next = cur;
-        npre.next = pre;
-        return dummy.next;
+    /**
+     * 头插法
+     * next 要放到pre后面
+     * cur要放到next后面
+     * 所以代码是
+     * next = cur.next
+     * cur.next = next.next
+     * next.next = pre.next;
+     * pre.next = next;
+     */
+    public static ListNode reverseBetween(ListNode head, int left, int right) {
+        // 设置 dummyNode 是这一类问题的一般做法
+        ListNode dummyNode = new ListNode(-1);
+        dummyNode.next = head;
+        ListNode pre = dummyNode;
+        for (int i = 0; i < left - 1; i++) {
+            pre = pre.next;
+        }
+        ListNode cur = pre.next;
+        ListNode next;
+        for (int i = 0; i < right - left; i++) {
+            next = cur.next;
+            cur.next = next.next;
+            next.next = pre.next;
+            pre.next = next;
+        }
+        return dummyNode.next;
     }
+
 
 }
