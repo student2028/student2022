@@ -2,9 +2,7 @@ package binarytree;
 
 import common.TreeNode;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * 给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，
@@ -86,6 +84,45 @@ public class TreePathSum {
             }
         }
         return false;
+    }
+
+    //leecode 路径总和2
+    //https://leetcode-cn.com/problems/path-sum-ii/submissions/
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        //这个题的思路也比较明显 做就是了 根节点到叶子节点
+        List<List<Integer>> res = new ArrayList<>();
+        if(root == null) return res;
+        Queue<TreeNode> qu = new LinkedList<>();
+        Queue<List<Integer>> qu2 = new LinkedList<>();
+        qu.offer(root);
+        List<Integer> list = new ArrayList();
+        list.add(root.val);
+        qu2.offer(list);
+        TreeNode node = null;
+        while(!qu.isEmpty()) {
+            node = qu.poll();
+            list = qu2.poll();
+            if(node.left == null && node.right == null) {
+                //leaf node, so do it judge equal or not if equal then add
+                System.out.println(list);
+                if(list.stream().mapToInt(x->x).sum() == targetSum)
+                    res.add (new ArrayList<>(list));
+            }
+            if(node.left != null) {
+                qu.offer(node.left);
+                List<Integer> ll = new ArrayList<>(list);
+                ll.add(node.left.val);
+                qu2.offer(ll);
+            }
+            if(node.right != null) {
+                qu.offer(node.right);
+                List<Integer> lr = new ArrayList<>(list);
+                lr.add(node.right.val);
+                qu2.offer(lr);
+            }
+        }
+
+        return res;
     }
 
         public static void main(String[] args) {

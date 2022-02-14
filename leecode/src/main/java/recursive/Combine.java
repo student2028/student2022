@@ -13,54 +13,35 @@ import java.util.List;
  * 输入：n = 4, k = 2
  * 来源：力扣（LeetCode）
  * 链接：https://leetcode-cn.com/problems/combinations
+ *
+ *
  */
 public class Combine {
 
     public static void main(String[] args) {
 
         Combine combine = new Combine();
-        combine.combine2(4,2).stream().forEach(System.out::println );
+        combine.combine(4,2).stream().forEach(System.out::println );
 
     }
-
 
     public List<List<Integer>> combine(int n, int k) {
-        List<List<Integer>> res = new ArrayList<>();
-        LinkedList<Integer> path = new LinkedList<>();
-        backtrack(res, path, n, k, 1);
-        return res;
-    }
-
-    private void backtrack(List<List<Integer>> res, LinkedList<Integer> path, int n, int k, int startIndex) {
-        if (path.size() == k) {
-            res.add(new ArrayList<>(path));
-            return;
-        }
-        for (int i = startIndex; i <= n - (k-path.size()) + 1 ; i++) {
-            path.add(i);
-            backtrack(res, path, n, k, startIndex + 1);
-            path.removeLast();
-        }
-
-    }
-
-    public List<List<Integer>> combine2(int n, int k) {
-        combineHelper(n, k, 1);
+        dfs(n, k, 1);
         return result;
     }
 
     List<List<Integer>> result = new ArrayList<>();
     List<Integer> path = new ArrayList<>();
 
-    private void combineHelper(int n, int k, int startIndex){
+    private void dfs(int k, int n, int start){
         //终止条件
         if (path.size() == k){
             result.add(new ArrayList<>(path));
             return;
         }
-        for (int i = startIndex; i <= n ; i++){
+        for (int i = start; i <= n ; i++){
             path.add(i);
-            combineHelper(n, k, i + 1);
+            dfs(k, n, i + 1);
             path.remove(path.size() -1 );
         }
     }
