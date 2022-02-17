@@ -30,14 +30,11 @@ public class BagProblem {
 
 
     public static void main(String[] args) {
-//        int[] weight = {1, 3, 4};
-//        int[] value = {15, 20, 30};
-//        int bagWight = 4;
-//        testWeightBagProblem(weight, value, bagWight);
+        int[] weight = {1, 3, 4};
+        int[] value = {15, 20, 30};
+        int bagWight = 4;
+        testWeightBagProblem(weight, value, bagWight);
 
-        int[] nums =  {1,5,11,5};
-        BagProblem bagProblem = new BagProblem();
-        System.out.println(bagProblem.canPartition(nums));
 
     }
 
@@ -56,26 +53,5 @@ public class BagProblem {
             System.out.print(dp[j] + " ");
         }
     }
-
-    /**
-     * 背包问题， 背包总量是sum/2 从物品中找出和为sum/2，则成功
-     */
-    public boolean canPartition(int[] nums) {
-        int sum = 0;
-        for(int num : nums) sum += num;
-        if(sum % 2  == 1) return false;
-        int target = sum/2;
-        int[] dp = new int[target + 1];
-        for(int num : nums) { //遍历 物品
-            for (int i = target; i >= num ; i--) { //遍历背包 只要背包大于num 就可以往里面加
-                //理解递推公式的意义  dp[i] 表示不放当前物品时的情况 dp[i-num] + num表示放当前物品的情况
-                //这两种情况就可以推导出当前背包的最大物品值
-                dp[i] = Math.max(dp[i], dp[i - num] + num);
-            }
-        }
-        return dp[target] == target;
-    }
-
-
 
 }
