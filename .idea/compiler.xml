@@ -8,6 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="cool-java" />
+        <module name="cool-spark" />
+        <module name="cool-scala" />
         <module name="bigdata-qa" />
         <module name="leecode" />
       </profile>
@@ -15,6 +17,8 @@
     <bytecodeTargetLevel target="8">
       <module name="bigdata-qa" target="1.5" />
       <module name="cool-java" target="8" />
+      <module name="cool-scala" target="1.8" />
+      <module name="cool-spark" target="8" />
       <module name="leecode" target="8" />
     </bytecodeTargetLevel>
   </component>

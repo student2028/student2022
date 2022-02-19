@@ -1,0 +1,58 @@
+#### Spark性能调优实战
+这是极客时间训练营吴磊老师讲的专栏，内容非常不错。
+1.在做spark开发的过程中，你都做过哪些优化？
+  1.在开发的过程中
+    1.开发过程中印象深刻的是，在把dataframe的数据写到外部的时候，譬如kafka,kafka的producer 对象不能放在foreach里面做，
+    要在foreach partitions里面做，写数据库里面也是，连接要放到partition里面，这样使用的变量少。
+    2.表的join 优先使用broadcast join等，配置调整spark相关的参数。
+    3.譬如先filter数据集然后再coalesce 减少对cpu内存资源的占用，减少了task的数量，否则filter之后，后面的rdd都继承partitions,
+    会产生很多的空的task.
+    4.我想重点说的是，现在多是采用sparksql来进行业务逻辑的处理，我所在的部门就是这样，主要的Etl逻辑都是在sql当中，所以性能调优主要是sparksql
+    相关模块的调整，主要是AQE启用。同时还有一个重要的点就就cte的使用，cte使用不当会造成性能成倍下降，如果一个临时表在后面会被多次使用，
+    请把它抽出来，缓存一下。
+
+  2.代码提交，在作业运行时，根据运行时sparkui等信息进行诊断后调整相关代码或参数
+  3.如果是计算密集型，多给些cpu，如果缓存较多，迭代很多，多给些内存。
+
+2.spark性能调优的本质是什么？
+   根据木桶理论，最短的木板决定了木桶的容量，因此，对于一个有短板的木桶，其他木板调得再高也无济于事，最短的木板才是瓶颈。
+   譬如spark调优的本质就是硬件资源的平衡，你cpu给的再多，内存不够，task也跑不不起来，或跑起来很慢。反之亦然。
+   性能调优是一个不断迭代的过程，不断找到问题解决问题。
+   性能调优主要是找短板，找到短板进行调整，事半功倍。
+   性能调优的过程收敛于硬件资源齐平，没有瓶颈的状态。
+
+   如何寻找短板？
+   1.专家经验
+   2.运行时诊断
+
+
+3.RDD 在spark中还重要吗？
+虽然现在api多是使用dataset/dataframe,sparksql但是spark rdd是其根基，
+譬如让你自定义开发一个spark sql的datasource的时候，你就会发现dsv1就是再发开发一个自定义的rdd.
+而且spark的dag/调度系统都是基于rdd,spark sql最后转换成的也是rdd，所以理解rdd有利于全面系统地理解
+spark的原理。
+你要在运行时判断应用的性能瓶颈，前提就是要理解 rdd.
+rdd的四大属性：
+1.partitions|splits  : 数据分片, 自定义rdd的时候，需要自定义自己的split,数据是如何分片的，这个代表的数据拿取的方式，这是compute方法的参数
+2.partitioner | : 转成另一个rdd时，数据会按照partitioner指定的方式进行分片,MapRdd默认是根据key的hashcode来进行分片的
+3.dependencies : 依赖， 数据从哪里来的 ， 可以理解为是父rdd更表, 可用于数据重算
+4.compute（split) : Iterator : 计算分片返回一个迭代器
+
+Rdd的弹性来自哪里呢？ 就是可以根据dependencies 和 compute 重算丢失的数据。
+需要注意的一点是，现在的存算分离的场景中，prelocations的作业不大了，可以忽略。
+
+4.DAG
+在Spark的DAG中，顶点是一个个的RDD,在Spark的DAG中，顶点是一个一个的dependencies属性构成的父子关系。
+Stage的划分
+从dag到stage的转化过程，以Actions算子为起点，从后向前回溯，以shuffle操作为边界去划分stages.
+为什么要划分stages?
+为了效率，可以串在一起操作的流程放在一起做，可以提高效率。
+在同一个stage内部，所有算子融合为一个函数，Stage的输出结果由这个函数一次性作用在输入数据集而产生。
+内存计算，不仅仅是指数据可以缓存在内存中，通过计算融合来大幅提升数据在内存中的转换效率，进而从整体上提升应用的执行性能。
+stage内部的所有算子会融合成一个函数，这是如何做到的呢？
+使用的codegen技术。
+Spark的内存计算怎么理解？
+1.基于rdd的分布式数据缓存 2.stage内的流水线式计算模式。
+
+5.示例 dataframe.map.coalesce(1).write 这个效率很差？ 慎用coalesce
+一不小心会用错，就会导致作业非常慢。

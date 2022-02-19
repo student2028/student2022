@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/bigdata-qa/bigdata-qa.iml" filepath="$PROJECT_DIR$/bigdata-qa/bigdata-qa.iml" />
       <module fileurl="file://$PROJECT_DIR$/cool-java/cool-java.iml" filepath="$PROJECT_DIR$/cool-java/cool-java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cool-python/cool-python.iml" filepath="$PROJECT_DIR$/cool-python/cool-python.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cool-scala/cool-scala.iml" filepath="$PROJECT_DIR$/cool-scala/cool-scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cool-spark/cool-spark.iml" filepath="$PROJECT_DIR$/cool-spark/cool-spark.iml" />
       <module fileurl="file://$PROJECT_DIR$/leecode/leecode.iml" filepath="$PROJECT_DIR$/leecode/leecode.iml" />
       <module fileurl="file://$PROJECT_DIR$/student2022.iml" filepath="$PROJECT_DIR$/student2022.iml" />
     </modules>
