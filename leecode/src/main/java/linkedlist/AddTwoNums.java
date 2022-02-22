@@ -18,8 +18,6 @@ import common.ListNode;
  * 如果是顺序的 还需要首先 反转一下链表
  * <p>
  * 之前做过类似的题 两个 数字字符串 加法
- * 2021年初我还没有刷过leecode 不知leecode为何物
- * 做了十几分钟勉强写出来 还不完善 羞愧难当...
  */
 public class AddTwoNums {
 
