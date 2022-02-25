@@ -41,25 +41,25 @@ public class LengthOfLIS {
     }
 
     /**
-     * 动规的思路 没想出来 但知道可以做 还有回溯
-     * 看了题解 容易懂 dp[i]表示前i个数字中包含 nums[i]时最长的子序列长度
-     * 它是怎么算出来的呢？ nums[i] > nums[j]的时候 等于前边所有的最长的加1
+     * 只要数组不是空 则至少有一个元素
+     * max = 1
+     * dp[i] 表示前i个元素中连续递增子序列的最大长度
+     * 初始化是dp[i]=1 至少是自身一个元素的长度 是1
+     * 如果 0-i-1中 如果 nums[i] > nums[j] dp[i] = Math.max(dp[i], dp[j] + 1)
      */
     public int lengthOfLIS(int... nums) {
+        if(nums == null) return 0;
         int n = nums.length;
-        if (n < 2) return 1;
-        int max = 0;
+        int max = 1;
         int[] dp = new int[n];
-        dp[0] = 1;
-        for (int i = 1; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             dp[i] = 1;
-            for (int j = 1; j < i; j++) {
+            for (int j = 0; j < i; j++) {
                 if (nums[i] > nums[j]) {
                     dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
             max = Math.max(max, dp[i]);
-
         }
         return max;
     }

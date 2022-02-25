@@ -1,4 +1,4 @@
-package basic;
+package dp;
 
 
 import static common.Utils.printArray;
@@ -19,6 +19,8 @@ public class MaxSubArray {
         // System.out.println(test.maxSubArray(nums));
 
         System.out.println(test.maxSubArray2(nums));
+
+        System.out.println(test.maxSubArray3(nums));
 
     }
 
@@ -56,5 +58,21 @@ public class MaxSubArray {
         return ans;
     }
 
+    /**
+     * dp算法
+     * dp[i] 表示i结尾的数组中最大子续和的长度
+     * dp[i] = Math.max(dp[i-1] + nums[i], nums[i])
+     * 当前值加入到序列中 或者只使用当前值  因为前面的和可能是负数
+     */
+    public int maxSubArray3(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        int res = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1] + nums[i], nums[i]);
+            res = Math.max(res, dp[i]);
+        }
+        return res;
+    }
 
 }

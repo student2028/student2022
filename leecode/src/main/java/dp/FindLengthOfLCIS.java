@@ -1,4 +1,4 @@
-package array;
+package dp;
 
 /**
  * 给定一个未经排序的整数数组，找到最长且 连续递增的子序列，并返回该序列的长度。
@@ -26,6 +26,9 @@ package array;
  */
 public class FindLengthOfLCIS {
 
+    //双指针思路 如果 后一个数小于等于前一个数 说明要开始一个新的序列 start = i
+    //这种思路和贪心很像 主要的好处是 有一个start 如果需要进一步输出最长序列的话
+    //也是比较方便做的
     public int findLengthOfLCIS(int[] nums) {
         if (nums == null) return 0;
         int ans = 1;
@@ -38,10 +41,48 @@ public class FindLengthOfLCIS {
         return ans;
     }
 
+    //贪心思路 如果nums[i+1] > nums[i] 则count++ 否则 count = 1
+    public int findLength1(int[] nums) {
+        if (nums == null) return 0;
+        if (nums.length == 1) return 1;
+        int n = nums.length;
+        int res = 1;
+        int count = 1;
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i + 1] > nums[i]) count++;
+            else count = 1;
+            res = Math.max(res, count);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         FindLengthOfLCIS test = new FindLengthOfLCIS();
         int[] nums = new int[]{1, 3, 6, 2, 1, 9, 10, 12};
         System.out.println(test.findLengthOfLCIS(nums));
+        System.out.println(test.findLength1(nums));
+        System.out.println(test.findLength2(nums));
 
+    }
+
+    //动规思路
+    //dp[i] 表示取i元素时最长的连续递增子数组的长度
+    //if(nums[i+1] > nums[i] 则dp[i] = dp[i-1] + 1; else  1;
+    public int findLength2(int[] nums) {
+        if (nums.length < 2) return 1;
+        int res = 1;
+        int n = nums.length;
+        int[] dp = new int[n];
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i + 1] > nums[i]) {
+                dp[i + 1] = dp[i] + 1;
+            }
+            res = Math.max(dp[i + 1], res);
+        }
+
+        return res;
     }
 }
