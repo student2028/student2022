@@ -1,8 +1,6 @@
 package common;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 
 /**
@@ -238,6 +236,13 @@ public class TreeNode {
         return traversal(nums, 0, nums.length - 1);
     }
 
+    //从根节点到当前节点的所有路径
+    List<List<TreeNode>> allPaths = new ArrayList<>();
+    public List<List<TreeNode>> paths(TreeNode root) {
+
+         return  allPaths;
+    }
+
     private static TreeNode traversal(int[] nums, int left, int right) {
         if (left > right) return null;
         int mid = left + (right - left) / 2;
@@ -250,14 +255,9 @@ public class TreeNode {
     public static void main(String[] args) {
         TreeNode root = TreeNode.of(1, 2, 3, 4, 5, 6, 7);
 
-//        root.preOrderShow();
-//        root.inOrderShow();
-//        root.postOrderShow();
-//
-//        root.show();
 
-        root.postOrderTraversal();
-    }
+
+     }
 
 }
 

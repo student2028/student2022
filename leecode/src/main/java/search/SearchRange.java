@@ -35,49 +35,44 @@ public class SearchRange {
 
     //使用二分查找
     private static int[] searchRange(int[] nums, int target) {
-        int[] res = {-1, -1};
-        res[0] = biSearch(nums, target);
-        res[1] = biSearch2(nums, target);
-        return res;
+        int left = findLeft(nums, target);
+        int right = findRight(nums, target);
+        return new int[] {left ,right };
     }
 
-    //求相等的值的最小的下标
-    //我们要求最左边的下标 就要往左找 就是相等的时候继续往左找 即>= target right = mid -1这一部分进行处理
-    //后面判断的时候 为什么判断 left 呢?
-    //debug 一下跳出的时候 就是left = mid + 1
-    //所以要考虑下 left 是否越界N
-    private static int biSearch(int[] nums, int target) {
-        int N = nums.length;
+    //充分理解二分查找 二分查找的变化用法
+    //找到有序数组中与target相同的最小索引值
+    //二分查找的时候要压缩right范围 记住这一点
+    private static int findLeft(int[] nums, int target) {
         int left = 0;
-        int right = N - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            //求最小的位置 则>= 都让right变小
-            if (nums[mid] >= target) right = mid - 1;
-            else left = mid + 1;
+        int n = nums.length;
+        int right = n -1;
+        while( left <= right) {
+            int mid = left + (right - left)/2;
+            if(nums[mid] >= target) {
+               right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
         }
-        if (left < N && nums[left] == target) return left;
+        if(left < n && nums[left] == target) return left;
         return -1;
     }
 
-    //求最右边的相等的值 最大的下标 解析同上 我们要找最右边的 即如果<=的时候 右边假定还有，则继续让left = mid + 1 向上走
-    //同理 最后退出的时候 为什么看right值 ？
-    // debug 一下 最后跳出的时候是在 right = mid - 1
-    // 同理考虑下right 是否越界0
-    private static int biSearch2(int[] nums, int target) {
-        int N = nums.length;
+    //找到最右边的值  就要扩大left的值 一直多往右边找
+    private static int findRight(int[] nums, int target) {
         int left = 0;
-        int right = N - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (nums[mid] <= target)
-                left = mid + 1;
+        int n = nums.length ;
+        int right = n - 1;
+        while(left <= right) {
+            int mid = left + (right - left)/2;
+            if(nums[mid] <= target) left = mid + 1;
             else right = mid - 1;
         }
-        if (right >= 0 && nums[right] == target) return right;
-
+        if(right >=0 && nums[right] == target) return right;
         return -1;
     }
+
 
 
 

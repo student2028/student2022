@@ -64,10 +64,10 @@ public class LC33 {
             int mid = left + ((right - left) >> 1);
             if (nums[mid] == target) return mid;
             if (nums[0] <= nums[mid]) { //说明 0 -- middle是有序的 可以按二分走
-                 if ( target > nums[0] && target < nums[mid])  right = mid - 1;
+                 if ( target >= nums[0] && target < nums[mid])  right = mid - 1;
                      else left = mid + 1;
             } else { //如果 mid - n - 1 之间有序的 可以被二分查找
-                if(target > nums[mid] && target < nums[n - 1]) left = mid + 1;
+                if(target > nums[mid] && target <= nums[n - 1]) left = mid + 1;
                 else right = mid - 1;
             }
         }

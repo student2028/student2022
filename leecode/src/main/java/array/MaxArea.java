@@ -29,16 +29,19 @@ public class MaxArea {
 
     }
 
+    //思路 面积需要有两条线  一条线 来自左边 一条线来自右边 使用双指针
+    //面积是由两边低的那个高度决定的
+    //怎么移动？ 一直保持着高的值 让小的值移动即可
     public int maxArea(int...  height) {
+        int maxArea = 0;
         int left = 0;
         int right = height.length - 1;
-        int res = 0;
         while(left < right) {
-            int min = Math.min(height[left],height[right]);//高度取小值
-            int area = min *(right - left);//求面积
-            res = Math.max(area, res);
-            if(height[right] > height[left]) left++; else right --;
+            int minHeight = Math.min(height[left],height[right]);
+            int area = minHeight * (right - left);
+            maxArea = Math.max(maxArea, area);
+            if(height[left]> height[right]) right --; else left ++;
         }
-        return res;
+        return maxArea;
     }
 }
