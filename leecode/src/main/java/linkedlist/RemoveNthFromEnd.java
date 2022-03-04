@@ -35,7 +35,6 @@ import common.ListNode;
  * 例如，在本题中，如果我们要删除节点 yyy，我们需要知道节点 yyy 的前驱节点 xxx，并将 xxx 的指针指向 yyy 的后继节点。
  * 但由于头节点不存在前驱节点，因此我们需要在删除头节点时进行特殊判断。但如果我们添加了哑节点，
  * 那么头节点的前驱节点就是哑节点本身，此时我们就只需要考虑通用的情况即可。
- *
  */
 public class RemoveNthFromEnd {
 
@@ -71,19 +70,18 @@ public class RemoveNthFromEnd {
      * 1 2 3 4 5 -> 3
      */
     private static ListNode removeNthFromEnd(ListNode head, int n) {
-
         ListNode dummy = new ListNode(-1, head);
-        ListNode fast = head;
+        int i = 0;
+        ListNode fast = dummy;
         ListNode slow = dummy;
-        //fast 先走n个节点
-        for (int i = 0; i < n; i++) {
+        while (i < n && fast != null) {
             fast = fast.next;
+            i++;
         }
-        while (fast != null) {
-            fast = fast.next;
+        while (fast.next != null) {
             slow = slow.next;
+            fast = fast.next;
         }
-        //fast == null 表示到达链表尾部 此时slow所在节点正好是倒数第N个节点
         slow.next = slow.next.next;
         return dummy.next;
     }

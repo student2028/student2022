@@ -7,7 +7,7 @@ import common.ListNode;
  * 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。
  * 请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
  * <p>
- * 输入：head = [1,2,3,4,5], left = 2, right = 4
+ * 输入：head = [1,2,3,4,5,6,7,8,9], left = 2, right = 4
  * 输出：[1,4,3,2,5]
  * <p>
  * 输入：head = [5], left = 1, right = 1
@@ -24,9 +24,9 @@ public class RevertList2 {
 
     public static void main(String[] args) {
 
-        ListNode head = ListNode.from(1, 2, 3, 4, 5);
+        ListNode head = ListNode.from(1, 2, 3, 4, 5,6,7,8,9);
         head.show();
-        ListNode node = reverseBetween(head, 2, 4);
+        ListNode node = reverseBetween(head, 2, 7);
         node.show();
         ListNode node2 = reverseBetween(ListNode.from(3, 5), 1, 2);
         node2.show();
@@ -38,12 +38,11 @@ public class RevertList2 {
     /**
      * 头插法
      * next 要放到pre后面
-     * cur要放到next后面
-     * 所以代码是
-     * next = cur.next
-     * cur.next = next.next
-     * next.next = pre.next;
-     * pre.next = next;
+     * 所以 next.next = pre.next;
+     *     pre.next = next;
+     *     但是 next.next 值要放哪里呢？ 所以前面有
+     *     cur.next = next.next;
+     *     pre/cur 都没有变化，但是它们后面的next 是一直在变
      */
     public static ListNode reverseBetween(ListNode head, int left, int right) {
         // 设置 dummyNode 是这一类问题的一般做法
@@ -60,6 +59,7 @@ public class RevertList2 {
             cur.next = next.next;
             next.next = pre.next;
             pre.next = next;
+            System.out.println("cur val is :" + cur.val());
         }
         return dummyNode.next;
     }

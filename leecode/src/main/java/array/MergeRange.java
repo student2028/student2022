@@ -39,7 +39,7 @@ public class MergeRange {
     }
 
     public int[][] merge(int[][] intervals) {
-        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+        Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
         List<int[]> res = new ArrayList<>();
         int size = intervals.length;
         res.add(intervals[0]);
@@ -53,7 +53,7 @@ public class MergeRange {
             }
         }
 
-        return res.toArray(new int[res.size()][]);
+        return res.toArray(new int[0][]);
     }
 
 }

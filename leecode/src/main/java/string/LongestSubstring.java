@@ -31,7 +31,7 @@ public class LongestSubstring {
         for (int end = 0, start = 0; end < n; end++) {
             char alpha = s.charAt(end);
             if (map.containsKey(alpha)) {
-                start = Math.max(map.get(alpha), start);
+                start = Math.max(map.get(alpha), start); //? 这句代码什么作用？ 因为后面可能也会有重复的字符 所以要和当前的start再对比一次 abba这样的情形
             }
             ans = Math.max(ans, end - start + 1);
             map.put(s.charAt(end), end + 1);
