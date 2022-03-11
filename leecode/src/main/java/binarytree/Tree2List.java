@@ -20,7 +20,6 @@ import java.util.Stack;
  * 输出：[1,null,2,null,3,null,4,null,5,null,6]
  * <p>
  * <p>
- * 自己写的答案很丑啊，多用了一个队列，其实不需要用的
  * 递归写法看的题解
  * <p>
  * 来源：力扣（LeetCode）
@@ -29,30 +28,23 @@ import java.util.Stack;
 public class Tree2List {
 
     public static void main(String[] args) {
-        TreeNode root = TreeNode.of(1, 2, 5, 3, 4, null, 6);
-        // TreeNode root = TreeNode.of(0);
+        TreeNode root = TreeNode.of(1, 2,3,4,5,6,7);
 
-        // root.listShow();
-        flatten(root);
+        //flatten(root);
+        flattenR(root);
         root.listShow();
     }
 
     //画画图就好理解了 自己在本本上好好画画
     private static void flattenR(TreeNode root) {
         if (root == null) return;  //中
-        flattenR(root.left);     // 左
-        flattenR(root.right);    // 右
+        flattenR(root.left);       // 左
+        flattenR(root.right);      // 右
         TreeNode last = root.right;    //存old右
         root.right = root.left;         //左移到右
         root.left = null;               // 左置空
         while (root.right != null) root = root.right; // 指向右末尾
         root.right = last;         //拼接
-/*
-         1
-       2   3
-     4  5
-*/
-
     }
 
     /**
@@ -65,16 +57,11 @@ public class Tree2List {
      */
     private static void flatten(TreeNode root) {
         if (root == null) return;
-        // 如果只有root 也要判断  否则下面会出现环
         Stack<TreeNode> st = new Stack<>();
         st.push(root);
-//        Queue<TreeNode> qu = new LinkedList<>();
         TreeNode head = new TreeNode(-1);
         while (!st.isEmpty()) {
             TreeNode node = st.pop();
-            System.out.print(node.val + "\t");
-//            qu.offer(node);
-
             head.right = node;
             head.left = null;
             head = node;
@@ -83,16 +70,6 @@ public class Tree2List {
             if (node.left != null) st.push(node.left);
         }
         root = head.right;
-
- //       TreeNode temp = root;
-//        while (!qu.isEmpty()) {
-//            TreeNode node = qu.poll();
-//            if (temp != node) {
-//                temp.left = null;
-//                temp.right = node;
-//                temp = node;
-//            }
-//        }
     }
 
 }

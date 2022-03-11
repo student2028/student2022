@@ -2,6 +2,8 @@ package linkedlist;
 
 import common.ListNode;
 
+import java.util.PriorityQueue;
+
 /**
  * leecode 23. 合并K个升序链表
  * hot100
@@ -25,41 +27,34 @@ public class MergeKLists {
 
     public static void main(String[] args) {
 
-        ListNode l1 = ListNode.from(1,4,5);
-        ListNode l2 = ListNode.from(1,3,4);
-        ListNode l3 = ListNode.from(2,6);
-
-        ListNode[] lists = new ListNode[]{l1,l2,l3};
-        mergeKLists(lists).show();
-
-
+        ListNode l1 = ListNode.from(1, 4, 5);
+        ListNode l2 = ListNode.from(1, 3, 4);
+        ListNode l3 = ListNode.from(2, 6);
+        ListNode[] lists = new ListNode[]{l1, l2, l3};
+        MergeKLists mergeKLists = new MergeKLists();
+        ListNode list = mergeKLists.mergeKLists(lists);
+        list.show();
     }
 
-    private static ListNode  mergeKLists(ListNode[] lists) {
-        ListNode dummy = null;
-        for (int i = 0; i < lists.length; i++) {
-            dummy = mergetList(dummy, lists[i]);
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+        ListNode dummy = new ListNode(0);
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(
+                lists.length, (a, b) -> (a.val() - b.val())
+        );
+
+        for(ListNode head : lists) if(head != null) pq.add(head);
+
+        ListNode list = dummy;
+        while (!pq.isEmpty()) {
+            ListNode node = pq.poll();
+            list.next = node;
+            if (node.next != null) pq.add(node.next);
+            list = list.next;
         }
 
-        return dummy;
-    }
-
-    private static ListNode mergetList(ListNode l1, ListNode l2) {
-        ListNode dummy = new ListNode();
-        ListNode curr = dummy;
-        while (l1 != null && l2 != null) {
-            if(l1.val() < l2.val()) {
-                curr.next = l1;
-                l1 = l1.next;
-            } else
-            {
-                curr.next = l2;
-                l2 = l2.next;
-            }
-            curr = curr.next;
-        }
-        curr.next = l1 == null ? l2 : l1;
         return dummy.next;
     }
+
 
 }

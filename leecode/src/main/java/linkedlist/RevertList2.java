@@ -31,6 +31,9 @@ public class RevertList2 {
         ListNode node2 = reverseBetween(ListNode.from(3, 5), 1, 2);
         node2.show();
 
+        ListNode root1 = ListNode.from(1,2,3,4,5,6,7);
+        root1.show();
+        reverseRange(root1, 2,5).show();
 
     }
 
@@ -45,24 +48,45 @@ public class RevertList2 {
      *     pre/cur 都没有变化，但是它们后面的next 是一直在变
      */
     public static ListNode reverseBetween(ListNode head, int left, int right) {
-        // 设置 dummyNode 是这一类问题的一般做法
-        ListNode dummyNode = new ListNode(-1);
-        dummyNode.next = head;
-        ListNode pre = dummyNode;
-        for (int i = 0; i < left - 1; i++) {
+        ListNode dummy = new ListNode(0, head);
+        ListNode pre = dummy;
+        //先前进到left 假定 left = 1
+        for (int i = 1; i < left ; i++) {
             pre = pre.next;
         }
         ListNode cur = pre.next;
         ListNode next;
-        for (int i = 0; i < right - left; i++) {
+        //假定 left = 1 right = 2
+        for(int i = 1 ; i < right - left + 1; i++) {
             next = cur.next;
             cur.next = next.next;
             next.next = pre.next;
             pre.next = next;
-            System.out.println("cur val is :" + cur.val());
         }
-        return dummyNode.next;
+        return dummy.next;
     }
 
+
+    //递归法 递归前N个节点
+    static ListNode successor = null;
+    public static ListNode reverseN(ListNode head, int n ) {
+        if(n == 1) {
+            successor = head.next;
+            return head;
+        }
+
+        ListNode last = reverseN(head.next, n - 1);
+        head.next.next = head;
+        head.next = successor;
+        return last;
+    }
+
+    public static ListNode reverseRange(ListNode  head, int m, int n) {
+        //base case
+        if(m == 1) return reverseN(head, n);
+        //前进到反转的起点
+        head.next = reverseRange(head.next , m - 1, n -1);
+        return head;
+    }
 
 }
