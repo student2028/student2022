@@ -2,6 +2,8 @@ package binarytree;
 
 import common.TreeNode;
 
+import java.util.Stack;
+
 /**
  * leecode 98
  * 给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
@@ -48,6 +50,34 @@ public class ValidateBST {
     }
 
 
+    //使用代码随想录上的迭代模板即可
+    //中序遍历即可 中序遍历就是升序
+    private static boolean validateBST(TreeNode root) {
+        if(root == null) return true;
+
+        Stack<TreeNode> st = new Stack<>();
+        st.push(root);
+
+        Integer preVal = null;
+        TreeNode node = null;
+
+        while(!st.isEmpty()) {
+            node = st.pop();
+            if(node != null) {
+                if(node.right!= null) st.push(node.right);
+                st.push(node);
+                st.push(null);
+                if(node.left != null) st.push(node.left);
+            } else
+            {
+                if(preVal == null) { preVal = st.pop().val; continue; }
+                node = st.pop();
+                if(preVal >= node.val)  return false;
+                preVal = node.val;
+            }
+        }
+        return true;
+    }
 
 
 }

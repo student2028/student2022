@@ -16,7 +16,8 @@ import static common.Utils.swap;
  * 把数组中的偶数移到最后面 。。。
  * 把数组中3的倍数移到最后面 。。。
  *
- *
+ * leecode 283 移动零
+ * Offer 21. 调整数组顺序使奇数位于偶数前面
  *
  */
 

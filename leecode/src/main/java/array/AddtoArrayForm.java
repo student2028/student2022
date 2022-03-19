@@ -32,32 +32,24 @@ public class AddtoArrayForm {
 
     public static void main(String[] args) {
         AddtoArrayForm test = new AddtoArrayForm();
-        System.out.println(test.addToArrayForm(new int[] {6},999));
+        System.out.println(test.addToArrayForm(new int[]{6}, 999));
 
     }
 
     public List<Integer> addToArrayForm(int[] num, int k) {
+        int n = num.length;
+        LinkedList<Integer> res = new LinkedList<>();
+        int sum, carry = 0;
+        for (int i = n - 1 ; i >= 0 || k > 0 || carry != 0; i--) {
+            int a = i >= 0 ? num[i] : 0;
+            int b = k > 0 ? k % 10 : 0;
+            k = k/10;
+            sum = a + b + carry;
+            carry = sum / 10;
+            res.addFirst(sum % 10);
+        }
 
-        // 1200 + 34  = 1234
-        //思路 从后往前相加 注意进位
-        int len = num.length;
-        int sum = 0;
-        List<Integer> ans = new LinkedList<>();
-        for (int i = len - 1; i >= 0; i--) {
-            sum = sum/10 +  num[i] + k % 10;
-            k /= 10;
-            ans.add(sum % 10);
-        }
-        //if(sum>9) ans.add(sum%10);
-        //如果k还没有完 或者 有最后的进位
-        while(k>0){
-            sum = sum/10 + k % 10;
-            k /= 10;
-            ans.add(sum % 10);
-        }
-        if(sum>9) ans.add(1);
-        Collections.reverse(ans);
-        return ans;
+        return res;
     }
 
     //官方题解 更加简洁

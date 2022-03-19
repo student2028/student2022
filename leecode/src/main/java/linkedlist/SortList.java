@@ -18,7 +18,7 @@ import common.ListNode;
 public class SortList {
     public static void main(String[] args) {
 
-        ListNode head = ListNode.from(-1, 5, 3, 4, 0);
+        ListNode head = ListNode.from(4,2,1,3);
         head.show();
 
         mergeSort(head).show();
@@ -58,15 +58,18 @@ public class SortList {
         return dummy.next;
     }
 
+    //这种写法的问题是 如果只有两个元素链表，则每次都返回的是第二个元素 导致一个死循环
+    //所以要么加一个pre 要么初始化的时候 用fast = head.next.next;
     private static ListNode getMid(ListNode head) {
-        if (head == null || head.next == null) return head;
-        ListNode fast = head.next.next; //这个地方请注意 如果给head 会报stack over flow的异常 待查验
+        ListNode fast = head;
         ListNode slow = head;
+        ListNode pre = null;
         while (fast != null && fast.next != null) {
+            pre = slow;
             slow = slow.next;
             fast = fast.next.next;
         }
-        return slow;
+        return pre;
     }
 
 

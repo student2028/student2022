@@ -33,8 +33,8 @@ public class ReverseListKGroup {
         ListNode cur = head;
         while(cur != null) {cur = cur.next; len ++; }
 
-        int start = 0;
-        while(start + k <= len) {
+        int start = 1;
+        while(start + k - 1 <= len) {
             head = reverseList(head, start, start + k - 1);
             start += k;
         }
@@ -43,17 +43,15 @@ public class ReverseListKGroup {
     }
 
     //参考92 可以反转 left.. right 之间的部分链表 反复调用这个方法来操作
+    //题目中索引 left right是从1开始 计算的
     public ListNode reverseList(ListNode head, int left, int right) {
         ListNode dummy = new ListNode(-1, head);
         ListNode pre = dummy;
-        //先走到left的前置节点
-        for(int i = 0; i< left; i++) {
-            pre = pre.next;
-        }
+        int i = 1;
+        while(i < left) { pre = pre.next; i++; }
         ListNode cur = pre.next;
-        ListNode next = null;
-        for (int i = 0; i < right - left ; i++) {
-            next = cur.next;
+        while(i++ < right) {
+            ListNode next = cur.next;
             cur.next = next.next;
             next.next = pre.next;
             pre.next = next;

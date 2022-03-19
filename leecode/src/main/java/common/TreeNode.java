@@ -189,6 +189,22 @@ public class TreeNode {
 
     }
 
+    //中序遍历 迭代算法2
+    public void inOrder2() {
+        TreeNode cur = this;
+        Deque<TreeNode> st = new LinkedList<>();
+        while(cur != null || !st.isEmpty()) {
+            if(cur != null) {
+                st.push(cur);
+                cur = cur.left;
+            } else {
+                cur = st.pop();
+                System.out.println(cur.val);
+                cur = cur.right;
+            }
+        }
+    }
+
 
     public   TreeNode find(int val) {
         return findNode(this, val);

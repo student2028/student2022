@@ -35,65 +35,35 @@ public class PartitionList {
 
     public static void main(String[] args) {
 
-        ListNode head = ListNode.from(1, 4, 3, 0, 2, 5, 2);
+        ListNode head = ListNode.from(4,2,1,3);
         head.show();
 
-        //在1后面插入结点6
-//        ListNode n6 = ListNode.from(6);
-//        ListNode l = head;
-//        while (l.next != null) {
-//            if (l.val() == 1) {
-//                n6.next = l.next;
-//                l.next = n6;
-//                l = l.next;
-//            }
-//            l = l.next;
-//        }
-//        head.show();
-//
-//        //删除节点5
-//        l = new ListNode(-1, head);
-//        while (l.next != null) {
-//            if (l.next.val() == 5) {
-//                l.next = l.next.next;
-//            }
-//            l = l.next;
-//        }
-//
-//        head.show();
-
-        partitionList(head, 3).show();
+        partitionList(head, null).show();
 
     }
 
-
-    private static ListNode partitionList(ListNode head, int x) {
-        if(head == null) return null;
-        ListNode dummy = new ListNode(-1, head);
-        ListNode first = dummy; // 指向待插入的位置
-        ListNode second = head; //一直往前走
-        while(second.val() < x) {
-            second = second.next;
-            first = first.next;
-        }
-        //上面这一段为什么是必须的？ 一去掉就会丢数据 下面这段代码可以调整
-        while (second != null && second.next != null) {
-            if (second.next.val() < x) {
-                //插入小于x的值 插入前要先把second 删除
-                //从当前位置删除 然后插入到first后面
-                ListNode temp = second.next;
-                second.next = second.next.next;
-                //插入到待插入的位置
-                temp.next = first.next;
-                first.next = temp;
-                first = first.next;
-                continue;
+     //left的左侧都是满足val<x的数据
+    private static  ListNode partitionList(ListNode head, ListNode end) {
+        if(head == end || head.next == end) return head;
+        int x = head.val();
+        ListNode dummy = new ListNode(0,head);
+        ListNode pre = dummy , cur = head, left = dummy;
+        while(cur != end) {
+            if(cur.val() < x) {
+                //cur删除 然后移到left后面即可
+                pre.next = cur.next;
+                cur.next = left.next;
+                left.next = cur;
+                left = left.next;
             }
-               second = second.next;
+            pre = cur;
+            cur = cur.next;
         }
-
         return dummy.next;
     }
+
+
+
 
 
 }

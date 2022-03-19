@@ -37,23 +37,17 @@ public class MergeKLists {
     }
 
     public ListNode mergeKLists(ListNode[] lists) {
-        if (lists == null || lists.length == 0) return null;
-        ListNode dummy = new ListNode(0);
-        PriorityQueue<ListNode> pq = new PriorityQueue<>(
-                lists.length, (a, b) -> (a.val() - b.val())
-        );
-
-        for(ListNode head : lists) if(head != null) pq.add(head);
-
-        ListNode list = dummy;
-        while (!pq.isEmpty()) {
-            ListNode node = pq.poll();
-            list.next = node;
-            if (node.next != null) pq.add(node.next);
-            list = list.next;
+        if(lists.length == 0) return null;
+        ListNode res = new ListNode(0);
+        ListNode cur = res;
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(lists.length, (a,b) -> a.val() - b.val() );
+        for(ListNode node : lists) if(node != null) pq.offer(node);
+        while(!pq.isEmpty()) {
+            cur.next = pq.poll();
+            cur = cur.next;
+            if(cur.next != null) pq.offer(cur.next);
         }
-
-        return dummy.next;
+        return res.next;
     }
 
 

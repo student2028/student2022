@@ -19,12 +19,9 @@ public class MergeSort {
     public static void main(String[] args) {
 
         int[] arr = Utils.generateIntArray(10);
-
         printArray(arr);
-
-        // mergeSort1(arr, new int[arr.length], 0, arr.length - 1);
-
-        mergeSort(arr, 0, arr.length - 1);
+        mergeSort1(arr, new int[arr.length], 0, arr.length - 1);
+        //  mergeSort(arr, 0, arr.length - 1);
         printArray(arr);
 
     }
@@ -35,20 +32,13 @@ public class MergeSort {
         mergeSort1(arr, temp, left, m);
         mergeSort1(arr, temp, m + 1, right);
 
-        int start1 = left;
-        int end1 = m;
-        int start2 = m + 1;
-        int end2 = right;
-        int k = left;
-
-        while (start1 <= end1 && start2 <= end2) temp[k++] = arr[start1] > arr[start2] ? arr[start2++] : arr[start1++];
-        while (start1 <= end1) temp[k++] = arr[start1++];
-        while (start2 <= end2) temp[k++] = arr[start2++];
-
-        for (k = left; k <= right; k++) {
-            arr[k] = temp[k];
+        int n1 = m, n2 = right, k = right;
+        while (n1 >= left || n2 >= m + 1) {
+            if (n1 >= left && n2 >= m + 1) temp[k--] = arr[n1] > arr[n2] ? arr[n1--] : arr[n2--];
+            else if (n1 >= left) temp[k--] = arr[n1--];
+            else temp[k--] = arr[n2--];
         }
-
+        for(k = left; k<= right; k++) arr[k] = temp[k];
     }
 
 
@@ -57,7 +47,6 @@ public class MergeSort {
         int m = left + (right - left) / 2;
         mergeSort(arr, left, m);
         mergeSort(arr, m + 1, right);
-
         merge(arr, left, m, right);
     }
 

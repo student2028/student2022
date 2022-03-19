@@ -32,6 +32,7 @@ public class StringMultiply {
         StringMultiply stringMultiply = new StringMultiply();
         System.out.println(stringMultiply.multiply("12", "19"));
         System.out.println(stringMultiply.multiply("0", "0"));
+        System.out.println(stringMultiply.multiply("123", "456"));
 
     }
 

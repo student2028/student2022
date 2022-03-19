@@ -34,7 +34,7 @@ public class LongestSubstring {
                 start = Math.max(map.get(alpha), start); //? 这句代码什么作用？ 因为后面可能也会有重复的字符 所以要和当前的start再对比一次 abba这样的情形
             }
             ans = Math.max(ans, end - start + 1);
-            map.put(s.charAt(end), end + 1);
+            map.put(alpha, end + 1);
         }
         return ans;
     }
@@ -56,6 +56,17 @@ public class LongestSubstring {
      * 这样比第一种思路有一些优化
      */
 
-
+    public static int lenth(String s) {
+        //记录字符出现的位置加1
+        int[] last = new int[128];
+        int n = s.length(), res = 0, start = 0;
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            start = Math.max(start, last[ch]); //abba
+            res = Math.max(res, i - start + 1);
+            last[ch] = i + 1;
+        }
+        return res;
+    }
 
 }

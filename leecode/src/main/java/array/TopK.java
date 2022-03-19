@@ -1,6 +1,8 @@
 package array;
 
 
+import java.util.PriorityQueue;
+
 import static common.Utils.printArray;
 import static common.Utils.swap;
 
@@ -22,7 +24,9 @@ public class TopK {
         printArray(nums);
         System.out.println("find the 第2大的元素：");
 
-        System.out.println(quickSelectKthNum(nums, 2));
+//      System.out.println(quickSelectKthNum(nums, 2));
+//      System.out.println(findK(nums, 0, nums.length -1, nums.length - 2));
+        System.out.println(findK2(nums, 2));
 
     }
 
@@ -37,20 +41,6 @@ public class TopK {
         swap(nums, i, left);
         return i;
     }
-
-    private static int partition2(int[] arr, int left, int right) {
-        int i = left;
-        int j = right;
-
-        while (i <= j) {
-            while (i <= j && arr[i] < arr[left]) i++;
-            while (i <= j && arr[j] > arr[left]) j--;
-            if (i <= j) swap(arr, i, j);
-        }
-        swap(arr, --i, left);
-        return i;
-    }
-
 
     private static int quickSelectKthNum(int[] nums, int k) {
         int N = nums.length;
@@ -67,11 +57,23 @@ public class TopK {
         return -1;
     }
 
-    static void quickSort(int[] nums, int left, int right) {
-        if (left >= right) return;
+    private static int findK(int[] nums, int left, int right, int k){
+        if(left >= right) return -1;
         int pivot = partition(nums, left, right);
-        quickSort(nums, left, pivot - 1);
-        quickSort(nums, pivot + 1, right);
+        if(pivot == k) return nums[k];
+        else if(pivot < k) return findK(nums, pivot + 1, right, k);
+        else return findK(nums, left, pivot - 1, k);
+    }
+
+    //使用优先队列 大顶堆 或 小顶堆
+    private static int findK2(int[] nums, int k) {
+        //如果是小顶堆  则第k个元素 就是第k大的
+        PriorityQueue<Integer> pq = new PriorityQueue<>(k);
+        for (int i = 0; i < nums.length; i++) {
+            pq.offer(nums[i]);
+            if(pq.size() > k) pq.poll();
+        }
+        return pq.poll();
     }
 
 }

@@ -2,6 +2,8 @@ package linkedlist;
 
 import common.ListNode;
 
+import java.util.Stack;
+
 /**
  * 给你两个 非空 链表来代表两个非负整数。数字最高位位于链表开始位置。
  * 它们的每个节点只存储一位数字。将这两数相加会返回一个新的链表。
@@ -35,34 +37,23 @@ public class AddTwoNums2 {
     }
 
     public ListNode addTwoNums(ListNode l1, ListNode l2) {
-        //转成字符串进行处理 然后头插法
-        ListNode l3 = null;
-        StringBuilder s1 = new StringBuilder(100);
-        StringBuilder s2 = new StringBuilder(100);
-        while (l1 != null) {
-            s1.append(l1.val());
-            l1 = l1.next;
-        }
-        while (l2 != null) {
-            s2.append(l2.val());
-            l2 = l2.next;
-        }
-        int sum = 0;
-        int carry = 0;
-        String add1 = s1.toString();
-        String add2 = s2.toString();
-        int len1 = add1.length() - 1;
-        int len2 = add2.length() - 1;
-        while (len1 > -1 || len2 > -1 || carry > 0) {
-            int a = len1 > -1 ? add1.charAt(len1--) - '0' : 0;
-            int b = len2 > -1 ? add2.charAt(len2--) - '0' : 0;
+        //这道题使用栈比较好哇
+        Stack<Integer> st1 = new Stack<>();
+        Stack<Integer> st2 = new Stack<>();
+        int sum , carry = 0;
+        ListNode res = null;
+        while(l1!=null) { st1.push(l1.val()); l1 = l1.next; }
+        while(l2!=null) { st2.push(l2.val()); l2 = l2.next; }
+
+        while(carry > 0 || !st1.isEmpty() || !st2.isEmpty()){
+            int a = st1.isEmpty() ? 0 : st1.pop();
+            int b = st2.isEmpty() ? 0 : st2.pop();
             sum = a + b + carry;
             carry = sum / 10;
             sum = sum % 10;
-            ListNode ln = new ListNode(sum, l3);
-            l3 = ln;
+            res = new ListNode(sum, res);
         }
 
-        return l3;
+        return res;
     }
 }
