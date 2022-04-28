@@ -38,7 +38,9 @@ public class PartitionList {
         ListNode head = ListNode.from(4,2,1,3);
         head.show();
 
-        partitionList(head, null).show();
+     //   partitionList(head, null).show();
+
+        sortList(head).show();
 
     }
 
@@ -61,6 +63,33 @@ public class PartitionList {
         }
         return dummy.next;
     }
+
+   private static ListNode sortList(ListNode head) {
+        if(head == null || head.next == null) return head;
+
+        ListNode small = new ListNode(), large = new ListNode();
+        ListNode psmall = small, plarge = large, node = head.next;
+        while(node != null) {
+            if(node.val() < head.val()) {
+                psmall .next = node;
+                psmall = psmall.next;
+            }else {
+                plarge.next = node;
+                plarge = plarge.next;
+            }
+            node = node.next;
+        }
+
+        psmall.next = head;
+        head.next = null;
+        plarge.next = null;
+
+        small = sortList(small.next);
+        large = sortList(large.next);
+
+        head.next = large;
+        return small;
+   }
 
 
 

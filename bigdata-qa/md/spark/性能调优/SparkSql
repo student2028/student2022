@@ -1,0 +1,72 @@
+
+1.spark sql中join是怎么实现的？
+到目前为止，数据关联总共有三种join实现方式，
+NLJ :Nested loop join
+SMJ: Shuffle sort merge join
+HJ : hash join
+
+nlj :forfor双循环 可以满足所有join类型，等值不等值连接。效率最差，O(m*n) ,使用小表做驱动表，就是小表做外循环
+smj: 排序，归并，归并的时候O(m+n) 但是前置的排序消耗资源多，适合大表的join, 除了<>的连接外的其他方式
+hj : 如果内表可以放到内存中，使用hashmap来把它构建起来，key是joinkey的hash值，value是joinkey和value，
+判断的时候，先把外表的joinkey组合hash后，到hashmap中判断，如果不存在，则说明没找到，如果找到，
+则再对比join key原值是否相同，如果相同，则拼接起来输出。
+
+
+spark中的数据分发方式有两种，一种是广播broadcast,一种是shuffle,再结合上述三种join方式，可以推出6种join策略。
+但因为有一种实现上有些低效，就broadcast smj ，已经广播了，hash join效率肯定比smj快，没必要再merge了。
+
+2.spark如何选择join策略？
+在等值数据关联中，spark会尝试按照 BHJ > SMJ > SHJ 的顺序依次选择join策略。
+因为shj更容易发生OOM，所以spark会优先选用SMJ,最稳定。
+
+在spark中，SHJ策略要想被选中需要满足两个条件，都是对数据尺寸的要求。
+1.外表大小是内表的三倍
+2.内表数据分片的平均大小要小于广播变量的阈值
+
+在不等值join中，只能使用nlj来实现，因此可选择的策略只有bnlj和cpj(笛卡尔积)
+
+3.大表join小表的优化？
+最常见的措施是转成bhj, 但对小表有一定的要求，如果小表的数据量超过8G,
+在大于8g的数据集上创建广播变量，spark会直接抛出异常，中断任务的执行。
+
+案例1: joinkeys远大于payload
+小表的关联字段在查询没有被用到，而小表超少8G，
+把小表的关联字段组成字符串进行hash,然后过滤掉了不用的字段，这样数据量减少到2G,可以放到了内存广播变量中。
+如何处理哈希冲突?
+作者推荐的一个方法是两次hash,即拼成字符串成使用两种不同的hash方法生成两个hashkey,这样的情况下，冲突的概率可以忽略。
+
+案例2: 事实表关联维度表的星型关联方式
+优化点1 把维度表的filter条件先做出来，然后缓存或者使用bhj,join hints or spark aqe
+优化点2 把事实表分区 使用spark dpp
+dpp 的先决条件:
+1.dpp仅支持等值join,不支持><等不等值关联
+2.维表过滤之后必须要小于广播阈值 ?
+3.事实表必须是分区表，且分区字段（可以是多个）必须包括join key
+
+案例3：小表数据分布均匀 把smj转丰shj
+当参与 Join 的两张表尺寸相差悬殊且小表数据分布均匀的时候，SHJ 往往比 SMJ 的执行效率更高
+SHJ 要想成功地完成计算、不抛 OOM 异常，需要保证小表的每个数据分片都能放进内存。
+
+4.大表join大表如何进行优化？
+a.分而治之 把大表降级为小表，然后使用上面大表join小表的思路进行处理
+我们要根据两张表的尺寸大小区分出外表和内表。一般来说，内表是尺寸较小的那一方。
+然后，我们人为地在内表上添加过滤条件，把内表划分为多个不重复的完整子集。
+接着，我们让外表依次与这些子集做关联，得到部分计算结果。
+最后，再用 Union 操作把所有的部分结果合并到一起，得到完整的计算结果，这就是端到端的关联计算。
+
+但与此同时，外表join多个小表再union,大表被反复扫描多次，如何优化这个点？
+我们还是要遵循“分而治之”的思想，既然内表可以“分而治之”，外表为什么不可以呢？对于外表参与的每一个子关联，
+在逻辑上，我们完全可以只扫描那些与内表子表相关的外表数据，并不需要每次都扫描外表的全量数据。
+
+学习过 Spark 3.0 的 DPP 机制之后，我们就可以利用 DPP 来对外表进行“分而治之”。
+
+5.如何处理数据倾斜？
+学过 AQE 之后，要应对数据倾斜，想必你很快就会想到 AQE 的特性：自动倾斜处理。
+给定如下配置项参数，Spark SQL 在运行时可以将策略 OptimizeSkewedJoin 插入到物理计划中，
+自动完成 Join 过程中对于数据倾斜的处理。
+spark.sql.adaptive.skewJoin.skewedPartitionFactor，
+判定倾斜的膨胀系数 spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes，
+判定倾斜的最低阈值 spark.sql.adaptive.advisoryPartitionSizeInBytes，以字节为单位定义拆分粒度。
+
+当 AQE 检测到外表存在倾斜分区之后，它会以 spark.sql.adaptive.advisoryPartitionSizeInBytes 配置的数值为拆分粒度，
+把倾斜分区拆分为多个数据分区。与此同时，AQE 还需要对内表中对应的数据分区进行复制，来保护两表之间的关联关系。

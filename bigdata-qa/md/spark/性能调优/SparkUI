@@ -1,0 +1,46 @@
+Executor 页面清楚地记录着每一个Executor消耗的数据量，以及它们对cpu,内存，磁盘等硬件资源的消耗。
+我们可以通过这些信息来判断Executors之间是否存在负载不均衡的情况，从而判断应用中是否存在数据倾斜的隐患。
+它们是tasks执行指标在Executor粒度上的汇总。
+
+Storage页面，记录着每一个分布式缓存，如rdd缓存，dataframe cache的细节，包括缓存级别，已缓存的分区数，
+缓存比例，内存大小与磁盘大小。
+以dataframe为例，它cache默认的级别是单副本的Disk Memory Deserialized方式。
+当Fraction Cached小于100%的时候，说明分布式数据集并没有完全缓存到内存（磁盘），这样的情况下我们要警惕
+缓存换入换出可能带来的性能隐患。
+
+如果Scheduler delay很多，这说明任务的调度开销很重，就需要考虑调整并发度与cpu/mem之间的平衡关系。
+如果shuffle write/read面积比较大，则说明shuffle负载很重，这个时候考虑是否可以使用broadcast join来
+消除shuffle.
+Task metric信息中Spill(mem) spill (disk)两个指标，是指shuffle的溢出数据，它指的是PartitionedPairBuffer,
+AppendOnlyMap等空间受限，腾挪出去的数据。
+用Spill(Memory)/Spill(Disk) = Ratio，可以得到数据膨胀系统数的近似值，有了这个值，我们就可以对于存储在磁盘中
+的数据，估算它在内存中的大小?
+
+shuffle的常规优化:
+1.使用ByPass 它要求计算逻辑不涉及map端的聚合和排序，二是Reduce阶段的并行度要小于参数
+spark.shuffle.sort.bypassMergeThreshold的设置值。
+2.调整读写缓冲区大小
+前提是Execution Memory的内存大小比较宽裕
+spark.shuffle.file.buffer :map阶段写入缓冲区大小 32K默认值
+spark.reducer.maxSizeInFlight  :Reduce阶段读缓冲区大小 48M默认值
+由于读写缓冲区都是以Task为粒度进行设置的，所以要小心点，一般来说50%是一个不错后始，即加大至1.5倍大小开始测试。
+
+
+如果运行时中某个dataframe的数据集不大，而使用默认的spark.sql.shuffle.partitions=200
+会导致多个作业的空跑，导致cpu利用率不高，执行性能变差，这个时候需要对数据集进行合并，而AQE的自动分区合并就可以
+帮我们做这一件事情。
+这一操作涉及到两个参数：一个是最小分区数，一个是合并之后的目标尺寸。
+最小分区数一般设置成Executor*cores的倍数，这是为了让所有Executor都有活干，提高利用率。
+目标尺寸可以按hdfs block size大小设置，可自行调整。
+
+加cache是性能调整最明显的途径，在sql中也是这样的。
+另外一点就是消除shuffle,加大broadcastThreshold值。
+这两个是最实用的调优思路，其他的调优思路不是很明显。
+
+
+广播变量优化数据关联是最高的调优技巧，而没有之一。
+要使用两个表的join使用广播join,需要小表在内存中的大小小于spark.sql.autoBroadcastJoinThreshold
+这个参数的值默认是10M,其实可以根据Executor.memory,加大到2G都可以。
+我们可以使用函数 sparksql中自带的执行计划评估出来的表在内存中的大小，可以根据这个对这个参数进行调整。
+
+

@@ -26,14 +26,26 @@ public class LRUCache {
     int capacity;
     LinkedHashMap<Integer, Integer> cache;
 
+//    public LRUCache(int capacity) {
+//        this.capacity = capacity;
+//        cache = new LinkedHashMap<Integer, Integer>(capacity, 0.75f, true) {
+//            // 重写 LinkedHashMap 的移除最老节点方法，当节点数大于 maxCapacity ，自动删除最老节点
+//            @Override
+//            protected boolean removeEldestEntry(Map.Entry eldest) {
+//                return cache.size() > capacity;
+//            }
+//        };
+//    }
+    //get put之后都需要把该key的元素放到最前面
+    //put的时候 分两种情况 已经存在的情况 新加的情况
+    //true for accessOrder false for insert Order
+
     public LRUCache(int capacity) {
-        this.capacity = capacity;
-        cache = new LinkedHashMap<Integer, Integer>(capacity, 0.75f, true) {
-            // 重写 LinkedHashMap 的移除最老节点方法，当节点数大于 maxCapacity ，自动删除最老节点
-            @Override
-            protected boolean removeEldestEntry(Map.Entry eldest) {
-                return cache.size() > capacity;
-            }
+        cache = new LinkedHashMap<Integer, Integer>(capacity,0.75f, true) {
+           @Override
+           protected  boolean removeEldestEntry(Map.Entry eldest) {
+              return cache.size() > capacity;
+           }
         };
     }
 

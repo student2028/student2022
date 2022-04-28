@@ -1,0 +1,129 @@
+1日志与日志段
+总的来说，Kafka 日志对象由多个日志段对象组成，而每个日志段对象会在磁盘上创建一组文件，包括消息日志文件（.log）、
+位移索引文件（.index）、时间戳索引文件（.timeindex）以及已中止（Aborted）事务的索引文件（.txnindex）。
+当然，如果你没有使用 Kafka 事务，已中止事务的索引文件是不会被创建出来的。
+图中的一串数字 0 是该日志段的起始位移值（Base Offset），也就是该日志段中所存的第一条消息的位移值。
+
+一般情况下，一个 Kafka 主题有很多分区，每个分区就对应一个 Log 对象，在物理磁盘上则对应于一个子目录。
+比如你创建了一个双分区的主题 test-topic，那么，Kafka 在磁盘上会创建两个子目录：test-topic-0 和 test-topic-1。
+而在服务器端，这就是两个 Log 对象。每个子目录下存在多组日志段，也就是多组.log、.index、.timeindex 文件组合，
+只不过文件名不同，因为每个日志段的起始位移不同。
+
+
+2.kafka的topic为什么要做分区？
+kafka的消息组织形式是topic->partition->消息
+为什么要做分区？如果不做分区，则消息的读写粒度就是topic粒度，并发读写粒度是1.
+而如果使用分区，让读写的粒度基于分区，就提高了系统的吞吐量。而且易于扩展。
+
+3.kafka有哪些分区策略？
+kafka支持自定义的分区策略，我们只要指定生产者的Partitioner.class即可，
+我们需要自己实现Partitioner接口.
+轮询策略:平均分配给partition, 现在是java 生产者api的默认分区策略。
+随机策略:先计算出该主题总的分区数，然后随机地返回一个小于它的正整数。
+它是老版本生产者使用的默认的生产者策略，新版本已经改成了轮询策略了。
+消息键保序策略：如果消息指定了key,则相同key的消息总会被分到同一个分区。这也是kafka的默认分区策略之一。
+
+4.关于kafka中的消息压缩？
+producer端压缩，broker端保持，consumer端解压缩。
+producer和broker端都有一个参数是compression.type.
+个别情况下，broker会重新解压再压缩，producer的压缩类型与broker端指定的压缩类型不同，另一种是为了兼容不同的消息格式。
+因为当前kafka有v1/v2两种类型。v2是指0.11之后中的消息类型。
+消息在broker端校验的时候也会解压缩，京东的小伙伴们已经提出建议去掉这个功能。
+但对于 Kafka 而言，它们的性能测试结果却出奇得一致，即在吞吐量方面：LZ4 > Snappy > zstd 和 GZIP；
+而在压缩比方面，zstd > LZ4 > GZIP > Snappy。
+
+何时使用压缩？
+如果生产者端的cpu富余而带宽紧张，则建议开启压缩。
+如果你的客户端机器 CPU 资源有很多富余，我强烈建议你开启 zstd 压缩，这样能极大地节省网络资源消耗。
+
+
+把Kafka官网通读几遍然后再实现一个实时日志收集系统（比如把服务器日志实时放入Kafka）。事实上，能把官网全面理解的话已经比很多Kafka使用者要强了。
+
+5.无消息丢失的配置怎么实现？
+kafka只对已提交的信息做有限度的持久化保证。
+生产者配置不丢数据
+消费者配置不丢数据
+broker端配置不丢数据
+Producer 永远要使用带有回调通知的发送 API，也就是说不要使用 producer.send(msg)，而要使用 producer.send(msg, callback)。
+设置 acks = all。acks 是 Producer 的一个参数，代表了你对“已提交”消息的定义。如果设置成 all，则表明所有副本 Broker 都要接收到消息，
+该消息才算是“已提交”。这是最高等级的“已提交”定义。
+配置了 retries > 0 的 Producer 能够自动重试消息发送，避免消息丢失。
+
+设置 unclean.leader.election.enable = false。这是 Broker 端的参数，它控制的是哪些 Broker 有资格竞选分区的 Leader。
+设置 replication.factor >= 3。这也是 Broker 端的参数.
+设置 min.insync.replicas > 1。这依然是 Broker 端参数，控制的是消息至少要被写入到多少个副本才算是“已提交”。(默认值是1）
+推荐设置成 replication.factor = min.insync.replicas + 1。
+kafka权威指南里的解释，生产者指定ack=all, 是要求同步副本（min.insync.replicas指定的就是最小同步副本个数），
+而不是分区的所有副本（replication.factor指定的是副本数目），都接收到消息，才算成功。
+replication.factor>min.insync.replicas是因为如果等于的话只要有一个副本宕机，就永远无法达到ack=all的要求，
+从而永远无法callback success??
+
+确保消息消费完成再提交。Consumer 端有个参数 enable.auto.commit，最好把它设置成 false，并采用手动提交位移的方式。
+
+6.kafka 为什么那么快？
+partition
+zero copy
+顺序写 pagecache
+
+7.kafka中何时创建生产者的tcp连接？
+在创建 KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为 Sender 的线程，该 Sender 线程开始运行时首先会创建与 Broker 的连接。
+如果不调用 send 方法，这个 Producer 都不知道给哪个主题发消息，它又怎么能知道连接哪个 Broker 呢？
+难不成它会连接 bootstrap.servers 参数指定的所有 Broker 吗？嗯，是的，Java Producer 目前还真是这样设计的。
+日志输出中的最后一行也很关键：它表明 Producer 向某一台 Broker 发送了 METADATA 请求，
+尝试获取集群的元数据信息——这就是前面提到的 Producer 能够获取集群所有信息的方法。
+
+通常情况下，我都不认为社区写的代码或做的设计就一定是对的，因此，很多类似的这种“质疑”会时不时地在我脑子里冒出来。
+
+TCP 连接还可能在两个地方被创建：一个是在更新元数据后，另一个是在消息发送时。
+Producer 通过 metadata.max.age.ms 参数定期地去更新元数据信息。这个值默认是五分钟，
+Producer 每 5 分钟都会强制刷新一次元数据以保证它是最及时的数据。
+
+Kafka 帮你关闭tcp连接，这与 Producer 端参数 connections.max.idle.ms 的值有关。默认情况下该参数值是 9 分钟，
+即如果在 9 分钟内没有任何请求“流过”某个 TCP 连接，那么 Kafka 会主动帮你把该 TCP 连接关闭。
+用户可以在 Producer 端设置 connections.max.idle.ms=-1 禁掉这种机制。一旦被设置成 -1，TCP 连接将成为永久长连接。
+集群元数据持久化在ZooKeeper中，同时也缓存在每台Broker的内存中，因此不需要请求ZooKeeper。
+
+8.consumer group的设计 ？为什么这样设计 ？ cg下的重平衡有什么问题？
+为什么这样设计？ 历史原因，点对点的和消息队列和sub/pub模式两种消息中间件。
+点对点的是消费完的数据就删除了，而sub/pub的需要每一个消费者订阅top所有的分区。吞吐量都不大。
+所以cp的出现解决了这两个问题，可以提高并发和灵活性。
+即 ZooKeeper 这类元框架其实并不适合进行频繁的写更新，而 Consumer Group 的位移更新却是一个非常频繁的操作。
+这种大吞吐量的写操作会极大地拖慢 ZooKeeper 集群的性能，
+因此 Kafka 社区渐渐有了这样的共识：将 Consumer 位移保存在 ZooKeeper 中是不合适的做法。
+
+Rebalance 本质上是一种协议，规定了一个 Consumer Group 下的所有 Consumer 如何达成一致，来分配订阅 Topic 的每个分区。
+比如某个 Group 下有 20 个 Consumer 实例，它订阅了一个具有 100 个分区的 Topic。
+正常情况下，Kafka 平均会为每个 Consumer 分配 5 个分区。这个分配的过程就叫 Rebalance。
+
+rb发生的时机？partition增加，topic增加或者consumer实例数量发生变化的情况下。
+它发生的时候所有cg下的消费者实例需要停止消费。类似 jvm gc的stw。
+当前的设计是重分配所有的消费者实例，影响较大。
+rb极大地降低了消费者的TPS.
+9.consumer grop rb 能避免吗？
+rb要所有consumer实例都参与，而且停止消费，而且Rb的效率很差很慢。
+作者说他遇到的90%的rb都是因为组成员发生了变化引起的？
+
+coordinator  and consumer 之间的一些配置:
+第一类非必要 Rebalance 是因为未能及时发送心跳，导致 Consumer 被“踢出”Group 而引发的。
+因此，你需要仔细地设置 session.timeout.ms 和 heartbeat.interval.ms 的值。
+设置 session.timeout.ms = 6s。设置 heartbeat.interval.ms = 2s。
+要保证 Consumer 实例在被判定为“dead”之前，能够发送至少 3 轮的心跳请求，
+即 session.timeout.ms >= 3 * heartbeat.interval.ms。
+
+第二类非必要 Rebalance 是 Consumer 消费时间过长导致的。
+max.poll.interval.ms 参数值的设置显得尤为关键。如果要避免非预期的 Rebalance，
+你最好将该参数值设置得大一点，比你的下游最大处理时间稍长一点。
+max.poll.interval.ms (default=300000) defines the time a consumer has to process all messages
+from a poll and fetch a new poll afterward. If this interval is exceeded,
+the consumer leaves the consumer group.
+
+session.timeout.ms (default=10000) defines the time a consumer has to send a heartbeat.
+If no heartbeat was received in that timeout, the member is considered dead and leaves the group.
+
+
+我见过太多因为 GC 设置不合理导致程序频发 Full GC 而引发的非预期 Rebalance 了。
+
+因为rb的这个问题，所以flink/spark连接 kafka的组件，使用的是standalone consumer,
+这样就不会发生Rb.
+
+

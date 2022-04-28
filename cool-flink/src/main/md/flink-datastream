@@ -1,0 +1,8 @@
+1.flink开发范式
+    Obtain an execution environment,
+    Load/create the initial data,
+    Specify transformations on this data,
+    Specify where to put the results of your computations,
+    Trigger the program execution
+
+
