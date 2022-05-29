@@ -7,10 +7,15 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/antlr4" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.apache.hadoop:hadoop-aws:3.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.amazonaws:aws-java-sdk-bundle:1.11.375" level="project" />
     <orderEntry type="library" name="Maven: org.apache.spark:spark-sql_2.12:3.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.rocksdb:rocksdbjni:6.20.3" level="project" />
     <orderEntry type="library" name="Maven: com.univocity:univocity-parsers:2.9.1" level="project" />
@@ -108,7 +113,6 @@
     <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-parser-combinators_2.12:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.janino:janino:3.0.16" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.janino:commons-compiler:3.0.16" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.8" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.2.11" level="project" />
     <orderEntry type="library" name="Maven: org.apache.arrow:arrow-vector:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.arrow:arrow-format:2.0.0" level="project" />
@@ -135,5 +139,6 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.xbean:xbean-asm9-shaded:4.20" level="project" />
     <orderEntry type="library" name="Maven: org.spark-project.spark:unused:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.8" level="project" />
   </component>
 </module>

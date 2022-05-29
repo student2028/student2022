@@ -14,19 +14,16 @@ public class Test {
 
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
 
-        spark.sql("select current_date() as dt, current_timestamp() as ts ").show();
+        spark.sql("select 1 as orderid, 100 as amount ,1 geoid , current_timestamp() as ts ")
+                .createOrReplaceTempView("order");
 
-        //测试一下啊
-        Random random = new Random();
-        Dataset<Row> df =  spark.range(10000).toDF("id")
-                .withColumn("name", functions.expr("'name'||id"))
-                .withColumn("age", functions.lit(random.nextInt(100)) )
-                .withColumn("addr", functions.lit("china beijing"));
-        df.cache();
-        df.count();
+        spark.sql("select 1 as geoid, 'china' as name , current_timestamp() as ts ")
+                .createOrReplaceTempView("geo");
 
-      //  spark.stop();
-        Thread.sleep(10000000);
+
+        spark.sql("select * from order join geo on order.geoid = geo.geoid").show();
+
+
 
     }
 

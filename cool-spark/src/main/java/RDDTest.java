@@ -16,9 +16,7 @@ import java.util.Random;
  */
 public class RDDTest {
 
-
     public static void main(String[] args) throws InterruptedException {
-
 
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
@@ -32,7 +30,6 @@ public class RDDTest {
         for (int i = 0; i < 10000; i++) {
             list.add(new Student(i, "name" + i, "china-beijing", random.nextInt(60) + 20));
         }
-
 
         JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
         JavaRDD<Student> rdd = jsc.parallelize(list);
